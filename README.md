@@ -8,7 +8,7 @@ The repository contains several examples where tensorflow probability is utilize
 - Bayesian inference for stochastic processes: an analytically solvable
   problem [blog](https://medium.com/@imscientist/bayesian-inference-for-stochastic-processes-an-analytically-solvable-problem-7ae8608a82b9)
 
-- Simplify likelihood when regressing against categorical variables: [blog]()
+- Simplify likelihood when regressing against categorical variables: [blog]() | [colab-notebook](https://colab.research.google.com/drive/1jmL8VxfiAKbtVAtUvAex6Wi9-a8zrGCe?usp=sharing)
 
 
 To test the examples execute:
