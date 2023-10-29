@@ -5,11 +5,12 @@ import tensorflow_probability as tfp
 
 from tensorflow_probability.python.distributions import distribution
 from tensorflow_probability.python.bijectors import softplus as softplus_bijector
-from tensorflow_probability.python.internal import tensor_util
-from tensorflow_probability.python.internal import prefer_static as ps
-from tensorflow_probability.python.internal import dtype_util
-from tensorflow_probability.python.internal import reparameterization
-from tensorflow_probability.python.internal import parameter_properties
+from tensorflow_probability.python.internal import (
+    prefer_static as ps,
+    dtype_util,
+    tensor_util,
+    reparameterization,
+    parameter_properties)
 
 logger = logging.getLogger(__name__)
 
@@ -147,11 +148,10 @@ def build_log_prob_fn(
 
     weight_dim = x.shape[1]
 
-    # shape = (n, 1)
-    x = tf.cast(x, dtype)
-    y_mean = tf.cast(y_mean, dtype)
-    y_std = tf.cast(y_std, dtype)
-    counts = tf.cast(counts.reshape(-1, 1), dtype)
+    x = tf.cast(x, dtype)  # shape = (samples, n)
+    y_mean = tf.cast(y_mean, dtype)  # shape = (samples, 1)
+    y_std = tf.cast(y_std, dtype)  # shape = (samples, 1)
+    counts = tf.cast(counts.reshape(-1, 1), dtype)  # shape = (samples, 1)
 
     # shape = (n, 2)
     y = tf.concat([y_mean, y_std], axis=-1)
@@ -191,9 +191,8 @@ def build_standard_log_prob_fn(
 
     weight_dim = x.shape[1]
 
-    # shape = (n, 1)
-    x = tf.cast(x, dtype)
-    y = tf.cast(y, dtype)
+    x = tf.cast(x, dtype)  # shape = (samples, n)
+    y = tf.cast(y, dtype)  # shape = (samples, 1)
 
     def likelihood(a, b):
         """ Likelihood """

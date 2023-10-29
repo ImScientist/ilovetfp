@@ -50,16 +50,16 @@ def generate_data(
 
     ranges = [range(c) for c in cardinalities]
 
-    # Iterate through all combinations of values that the cat features can take
-    for s, groups in zip(samples, itertools.product(*ranges)):
+    # Iterate through all combinations of values of the categorical features
+    for s, feature_combination in zip(samples, itertools.product(*ranges)):
         df = pd.DataFrame(index=np.arange(s))
         df['y_mean'] = 0
         df['y_std'] = 0
 
-        for feature_idx, gr in enumerate(groups):
-            df[f'f{feature_idx}'] = gr
-            df['y_mean'] += b[feature_idx][gr]
-            df['y_std'] += a[feature_idx][gr]
+        for feature_idx, value in enumerate(feature_combination):
+            df[f'f{feature_idx}'] = value
+            df['y_mean'] += b[feature_idx][value]
+            df['y_std'] += a[feature_idx][value]
 
         all_df.append(df)
 

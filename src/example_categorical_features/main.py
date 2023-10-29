@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import tensorflow_probability as tfp
+
 from typing import Literal
 from sklearn.preprocessing import OneHotEncoder
 from .misc import generate_data
@@ -10,21 +11,24 @@ from .logprob import build_log_prob_fn, build_standard_log_prob_fn
 from .posterior import build_surrogate_posterior
 
 logger = logging.getLogger(__name__)
+tf.get_logger().setLevel('ERROR')
 
 
 def train(
         data: pd.DataFrame,
         oe: OneHotEncoder,
         features: list[str],
-        method: Literal['standard', 'aggregated_data']
+        method: Literal['raw', 'aggregated']
 ):
-    """ Train a model usding aggregated data """
+    """ Train a model using raw or aggregated data """
+
+    logger.info(f'Train a model using {method} data...')
 
     data_agg = (data
                 .groupby(features, as_index=False)
                 .agg(y_mean=('y', 'mean'), y_std=('y', 'std'), n=('y', 'count')))
 
-    if method == 'aggregated_data':
+    if method == 'aggregated':
         x = oe.transform(data_agg[features])  # OHE features
         y_mean = data_agg[['y_mean']].values
         y_std = data_agg[['y_std']].values
@@ -64,21 +68,23 @@ def train(
 
 
 def main():
-    """ main """
+    """ Compare model training with raw and aggregated data
+    that has only categorical features """
 
     cardinalities = [2, 4]  # generate 2 features with cardinalities 2 and 4
-    samples = [1_000, 5_000, 2_000, 5_000] * 2  # 8 combinations btw the feature values
+    samples = [10, 50, 20, 50] * 2  # 8 combinations btw the feature values
+    # samples = [100, 500, 200, 500] * 2
 
     # We should provide a number of samples for every combination of categorical features;
     assert np.prod(cardinalities) == len(samples)
 
     data, a, b, features = generate_data(samples=samples, cardinalities=cardinalities)
 
-    oe = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+    oe = OneHotEncoder(sparse_output=False)
     oe.fit(data[features])
 
-    results_agg = train(data, oe=oe, features=features, method='aggregated_data')
-    results_standard = train(data, oe=oe, features=features, method='standard')
+    results_agg = train(data, oe=oe, features=features, method='aggregated')
+    results_standard = train(data, oe=oe, features=features, method='raw')
 
-    logger.info(f'results_agg:\n{results_agg.round(2)}\n\n\n')
-    logger.info(f'results_standard:\n{results_standard.round(2)}\n')
+    logger.info(f'results agg data:\n{results_agg.round(2)}\n\n\n')
+    logger.info(f'results raw data:\n{results_standard.round(2)}\n')
