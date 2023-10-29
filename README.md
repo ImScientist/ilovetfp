@@ -1,4 +1,4 @@
-# I love TensorFlow probability
+# I :black_heart: TensorFlow probability
 
 The repository contains several examples where tensorflow probability is utilized:
 
