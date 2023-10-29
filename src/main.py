@@ -6,8 +6,6 @@ logging.basicConfig()
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-logger = logging.getLogger(__name__)
-
 
 @click.group()
 def cli():
