@@ -138,7 +138,7 @@ def weights_prior(name: str, n: int, lam):
         name=name)
 
 
-def build_log_prob_fn(
+def build_model(
         x: np.ndarray,
         y_mean: np.ndarray,
         y_std: np.ndarray,
@@ -180,10 +180,10 @@ def build_log_prob_fn(
 
     log_prob_fn = lambda *x: model.log_prob(x + (y,))
 
-    return log_prob_fn
+    return model, log_prob_fn
 
 
-def build_standard_log_prob_fn(
+def build_model_standard(
         x: np.ndarray,
         y: np.ndarray,
 ):
@@ -217,4 +217,4 @@ def build_standard_log_prob_fn(
 
     log_prob_fn = lambda *x: model.log_prob(x + (y,))
 
-    return log_prob_fn
+    return model, log_prob_fn
