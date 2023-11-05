@@ -63,10 +63,10 @@ def plot_results(results_analytical, results_vi, results_mcmc, ns):
 
     fig = plt.figure(figsize=(15, 4 * rows))
 
-    for idx, n in enumerate(ns, 0):
+    for idx, n in enumerate(ns):
         res_true = results_analytical[idx]
         res_vi = results_vi[idx]
-        w_samples = results_mcmc[idx][0].numpy().reshape(-1)
+        w_samples = results_mcmc[idx]
 
         ax = fig.add_subplot(rows, 2, idx + 1)
         x = np.linspace(-.05, .55, 200)
