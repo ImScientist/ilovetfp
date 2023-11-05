@@ -187,7 +187,8 @@ def main(save_dir: str):
         results_analytical=results_analytical,
         results_vi=results_vi,
         ns=ns)
-    # df_params.to_parquet(opj(save_dir, 'distribution_params.parquet'))
+    df_params.columns = df_params.columns.map('_'.join)
+    df_params.to_parquet(opj(save_dir, 'distribution_params.parquet'))
 
     # Regression weights (mean, std)
     df_weights = compare_weight_parameters(
@@ -196,7 +197,8 @@ def main(save_dir: str):
         results_vi_lognorm=results_vi_lognorm,
         results_mcmc=[{'mean': s.mean(), 'std': s.std()} for s in samples_mcmc],
         ns=ns)
-    # df_weights.to_parquet(opj(save_dir, 'weights_params.parquet'))
+    df_weights.columns = df_weights.columns.map('_'.join)
+    df_weights.to_parquet(opj(save_dir, 'weights_params.parquet'))
 
     fig = plot_results(results_analytical, results_vi, samples_mcmc, ns=ns)
     fig.savefig(opj(save_dir, 'results_truncated_normal.png'), dpi=200, bbox_inches='tight')
