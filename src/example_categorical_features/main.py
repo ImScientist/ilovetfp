@@ -7,7 +7,7 @@ import tensorflow_probability as tfp
 from typing import Literal
 from sklearn.preprocessing import OneHotEncoder
 from .misc import generate_data
-from .logprob import build_log_prob_fn, build_standard_log_prob_fn
+from .model import build_model, build_model_standard
 from .posterior import build_surrogate_posterior
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ def train(
         data: pd.DataFrame,
         oe: OneHotEncoder,
         features: list[str],
-        method: Literal['raw', 'aggregated']
+        method: Literal['standard', 'aggregated']
 ):
     """ Train a model using raw or aggregated data """
 
@@ -34,12 +34,12 @@ def train(
         y_std = data_agg[['y_std']].values
         counts = data_agg[['n']].values
 
-        log_prob_fn = build_log_prob_fn(x=x, y_mean=y_mean, y_std=y_std, counts=counts)
+        model, log_prob_fn = build_model(x=x, y_mean=y_mean, y_std=y_std, counts=counts)
     else:
         x = oe.transform(data[features])
         y = data[['y']].values
 
-        log_prob_fn = build_standard_log_prob_fn(x=x, y=y)
+        model, log_prob_fn = build_model_standard(x=x, y=y)
 
     surrogate_posterior = build_surrogate_posterior(weight_dim=x.shape[1])
 
@@ -84,7 +84,7 @@ def main():
     oe.fit(data[features])
 
     results_agg = train(data, oe=oe, features=features, method='aggregated')
-    results_standard = train(data, oe=oe, features=features, method='raw')
+    results_standard = train(data, oe=oe, features=features, method='standard')
 
     logger.info(f'results agg data:\n{results_agg.round(2)}\n\n\n')
     logger.info(f'results raw data:\n{results_standard.round(2)}\n')
